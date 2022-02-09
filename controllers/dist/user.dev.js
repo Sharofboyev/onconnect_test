@@ -56,6 +56,13 @@ function createUser(req, res) {
     }
   }, null, null, [[0, 12]]);
 }
+/**
+ * @description Return jwt token in the header of response if password is correct
+ * @param req {object} Express req object 
+ * @param res {object} Express res object
+ * @returns {Promise<*>}
+ */
+
 
 function authenticate(req, res) {
   var _ref2, success, status, token;

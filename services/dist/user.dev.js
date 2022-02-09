@@ -91,36 +91,53 @@ function () {
      * @description Compares inserted password and hashed password from database to authenticate user
      * @param {String} userName - Username of user, min length 4, max length 32
      * @param {String} password - Password of user, min length 8, max length 32
-     * @returns {Promise <{success: Boolean, status: Number} | {success: Boolean, status: Number, token: String}>} Returns object with token property if password is correct, status code can be 200, 400, 401, 404, 500
+     * @returns {Promise <{success: Boolean, status: Number, error: String} | {success: Boolean, status: Number, token: String}>} Returns object with token property if password is correct, status code can be 200, 400, 401, 404, 500
      */
 
   }, {
     key: "auth",
     value: function auth(userName, password) {
-      var user_data, token;
+      var error, user_data, token;
       return regeneratorRuntime.async(function auth$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
-              if (!(Joi.string().min(4).max(32).required().validate(userName).error || Joi.string().min(8).max(32).required().validate(password).error)) {
-                _context2.next = 2;
+              error = Joi.string().min(4).max(32).required().validate(userName).error;
+
+              if (!error) {
+                _context2.next = 5;
                 break;
               }
 
               return _context2.abrupt("return", {
                 success: false,
-                status: 400
+                status: 400,
+                error: error.details[0].message
               });
 
-            case 2:
-              _context2.next = 4;
+            case 5:
+              error = Joi.string().min(8).max(32).required().validate(password).error;
+
+              if (!error) {
+                _context2.next = 8;
+                break;
+              }
+
+              return _context2.abrupt("return", {
+                success: false,
+                status: 400,
+                error: error.details[0].message
+              });
+
+            case 8:
+              _context2.next = 10;
               return regeneratorRuntime.awrap(this.user_model.getUserData(userName));
 
-            case 4:
+            case 10:
               user_data = _context2.sent;
 
               if (!(user_data === null)) {
-                _context2.next = 9;
+                _context2.next = 15;
                 break;
               }
 
@@ -129,9 +146,9 @@ function () {
                 status: 500
               });
 
-            case 9:
+            case 15:
               if (!(user_data === undefined)) {
-                _context2.next = 11;
+                _context2.next = 17;
                 break;
               }
 
@@ -140,9 +157,9 @@ function () {
                 status: 404
               });
 
-            case 11:
+            case 17:
               if (!bcrypt.compareSync(password, user_data.password)) {
-                _context2.next = 16;
+                _context2.next = 22;
                 break;
               }
 
@@ -157,7 +174,7 @@ function () {
                 token: token
               });
 
-            case 16:
+            case 22:
             case "end":
               return _context2.stop();
           }
@@ -169,4 +186,35 @@ function () {
   return UserService;
 }();
 
+var MessengerService =
+/*#__PURE__*/
+function () {
+  /**
+   * @description Create an instance of UserService to implement all logic with user
+   */
+  function MessengerService() {
+    _classCallCheck(this, MessengerService);
+  }
+  /**
+   * @description Verifies token provided by user
+   * @param {String} token JSON web token to verify user is authenticated 
+   * @returns {Promise <Object | null>} Returns null if token is invalid, decoded user data if valid token provided
+   */
+
+
+  _createClass(MessengerService, [{
+    key: "auth",
+    value: function auth(token) {
+      try {
+        return jwt.verify(token, config.privateKey);
+      } catch (error) {
+        return null;
+      }
+    }
+  }]);
+
+  return MessengerService;
+}();
+
 module.exports.UserService = UserService;
+module.exports.MessengerService = MessengerService;

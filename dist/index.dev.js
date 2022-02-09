@@ -8,6 +8,16 @@ var config = require("./config");
 
 var body_parser = require("body-parser");
 
+var server = require("http").createServer();
+
+var _require = require("ws"),
+    WebSocket = _require.WebSocket,
+    WebSocketServer = _require.WebSocketServer;
+
+var wss = new WebSocketServer({
+  port: config.socket_port,
+  server: server
+});
 app.use(body_parser.json());
 
 var user = require("./routers/index");

@@ -35,11 +35,18 @@ class UserService {
      * @description Compares inserted password and hashed password from database to authenticate user
      * @param {String} userName - Username of user, min length 4, max length 32
      * @param {String} password - Password of user, min length 8, max length 32
-     * @returns {Promise <{success: Boolean, status: Number} | {success: Boolean, status: Number, token: String}>} Returns object with token property if password is correct, status code can be 200, 400, 401, 404, 500
+     * @returns {Promise <{success: Boolean, status: Number, error: String} | {success: Boolean, status: Number, token: String}>} Returns object with token property if password is correct, status code can be 200, 400, 401, 404, 500
      */
     async auth (userName, password){
-        if (Joi.string().min(4).max(32).required().validate(userName).error || Joi.string().min(8).max(32).required().validate(password).error)
-            return {success: false, status: 400};
+        let error = Joi.string().min(4).max(32).required().validate(userName).error
+        if (error){
+            return {success: false, status: 400, error: error.details[0].message};
+        } 
+        else {
+            error = Joi.string().min(8).max(32).required().validate(password).error;
+            if (error)
+                return {success: false, status: 400, error: error.details[0].message};
+        } 
         
         let user_data = await this.user_model.getUserData(userName);
         if (user_data === null) return {success: false, status: 500}
@@ -54,4 +61,27 @@ class UserService {
     }
 }
 
+class MessengerService {
+    /**
+     * @description Create an instance of UserService to implement all logic with user
+     */
+    constructor (){
+    }
+
+    /**
+     * @description Verifies token provided by user
+     * @param {String} token JSON web token to verify user is authenticated 
+     * @returns {Promise <Object | null>} Returns null if token is invalid, decoded user data if valid token provided
+     */
+    auth(token){
+        try {
+            return jwt.verify(token, config.privateKey)
+        }
+        catch (error) {
+            return null;
+        }
+    }
+}
+
 module.exports.UserService = UserService
+module.exports.MessengerService = MessengerService

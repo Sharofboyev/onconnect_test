@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const config = require("./config");
 const body_parser = require("body-parser");
+const server = require("http").createServer();
+const {WebSocket, WebSocketServer} = require("ws");
+const wss = new WebSocketServer({port: config.socket_port, server: server})
 
 app.use(body_parser.json());
 

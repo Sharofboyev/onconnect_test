@@ -19,6 +19,12 @@ async function createUser (req, res) {
     }
 }
 
+/**
+ * @description Return jwt token in the header of response if password is correct
+ * @param req {object} Express req object 
+ * @param res {object} Express res object
+ * @returns {Promise<*>}
+ */
 async function authenticate (req, res) {
     try {
         const {success, status, token} = await userServiceInstance.auth(req.body.userName, req.body.password);
@@ -30,4 +36,5 @@ async function authenticate (req, res) {
         res.status(500).send("Internal server error occured")
     }
 }
+
 module.exports = { createUser, authenticate };

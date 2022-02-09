@@ -10,5 +10,6 @@ module.exports = {
     },
     saltRounds: Number(process.env.SALT_ROUNDS),
     privateKey: process.env.PRIVATE_KEY,
-    expiration: Number(process.env.EXP_SEC)
+    expiration: Number(process.env.EXP_SEC),
+    socket_port: Number(process.env.SOCKET_PORT)
 }
