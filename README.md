@@ -6,6 +6,7 @@ You should download the code from [GitHub](https://github.com/Sharofboyev/onconn
 ```bash
 npm i
 ```
+There is default.env file for getting environment file structure. Change it as needed
 
 node js version 12+ and local postgresql server required.
 
