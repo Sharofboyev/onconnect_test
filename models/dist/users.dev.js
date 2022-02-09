@@ -75,22 +75,22 @@ function () {
       }, null, this, [[0, 6]]);
     }
     /**
-     * @description used to get password of user with given username (for checking authentication)
+     * @description used to get hashed password and other data of user with given username (for checking authentication)
      * @param {String} username - Username of user
-     * @returns {Promise <String | null | undefined>} Password of user with given username, undefined if user not exists, null if error occurs
+     * @returns {Promise <Object | null | undefined>} Password of user with given username, undefined if user not exists, null if error occurs
      */
 
   }, {
-    key: "getPassword",
-    value: function getPassword(username) {
+    key: "getUserData",
+    value: function getUserData(username) {
       var res;
-      return regeneratorRuntime.async(function getPassword$(_context2) {
+      return regeneratorRuntime.async(function getUserData$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
             case 0:
               _context2.prev = 0;
               _context2.next = 3;
-              return regeneratorRuntime.awrap(this.pool.query("SELECT password FROM users WHERE username = $1", [username]));
+              return regeneratorRuntime.awrap(this.pool.query("SELECT password, status FROM users WHERE username = $1", [username]));
 
             case 3:
               res = _context2.sent;
@@ -103,7 +103,10 @@ function () {
               return _context2.abrupt("return", undefined);
 
             case 6:
-              return _context2.abrupt("return", res.rows[0].password);
+              return _context2.abrupt("return", {
+                password: res.rows[0].password,
+                status: res.rows[0].status
+              });
 
             case 9:
               _context2.prev = 9;

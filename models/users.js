@@ -40,15 +40,15 @@ class UsersModel {
     }
 
     /**
-     * @description used to get password of user with given username (for checking authentication)
+     * @description used to get hashed password and other data of user with given username (for checking authentication)
      * @param {String} username - Username of user
-     * @returns {Promise <String | null | undefined>} Password of user with given username, undefined if user not exists, null if error occurs
+     * @returns {Promise <Object | null | undefined>} Password of user with given username, undefined if user not exists, null if error occurs
      */
-    async getPassword(username){
+    async getUserData(username){
         try {
-            let res = await this.pool.query("SELECT password FROM users WHERE username = $1", [username]);
+            let res = await this.pool.query("SELECT password, status FROM users WHERE username = $1", [username]);
             if (res.rowCount === 0) return undefined;
-            return res.rows[0].password
+            return {password: res.rows[0].password, status: res.rows[0].status}
         }
         catch (err){
             return null

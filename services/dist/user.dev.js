@@ -97,7 +97,7 @@ function () {
   }, {
     key: "auth",
     value: function auth(userName, password) {
-      var hashed_password, token;
+      var user_data, token;
       return regeneratorRuntime.async(function auth$(_context2) {
         while (1) {
           switch (_context2.prev = _context2.next) {
@@ -114,12 +114,12 @@ function () {
 
             case 2:
               _context2.next = 4;
-              return regeneratorRuntime.awrap(this.user_model.getPassword(userName));
+              return regeneratorRuntime.awrap(this.user_model.getUserData(userName));
 
             case 4:
-              hashed_password = _context2.sent;
+              user_data = _context2.sent;
 
-              if (!(hashed_password === null)) {
+              if (!(user_data === null)) {
                 _context2.next = 9;
                 break;
               }
@@ -130,7 +130,7 @@ function () {
               });
 
             case 9:
-              if (!(hashed_password === undefined)) {
+              if (!(user_data === undefined)) {
                 _context2.next = 11;
                 break;
               }
@@ -141,14 +141,14 @@ function () {
               });
 
             case 11:
-              if (!bcrypt.compareSync(password, hashed_password)) {
-                _context2.next = 14;
+              if (!bcrypt.compareSync(password, user_data.password)) {
+                _context2.next = 16;
                 break;
               }
 
-              token = jwt.sign({
-                userName: userName
-              }, config.privateKey, {
+              user_data.userName = userName;
+              delete user_data.password;
+              token = jwt.sign(user_data, config.privateKey, {
                 expiresIn: config.expiration
               });
               return _context2.abrupt("return", {
@@ -157,7 +157,7 @@ function () {
                 token: token
               });
 
-            case 14:
+            case 16:
             case "end":
               return _context2.stop();
           }

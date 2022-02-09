@@ -41,12 +41,14 @@ class UserService {
         if (Joi.string().min(4).max(32).required().validate(userName).error || Joi.string().min(8).max(32).required().validate(password).error)
             return {success: false, status: 400};
         
-        let hashed_password = await this.user_model.getPassword(userName);
-        if (hashed_password === null) return {success: false, status: 500}
-        else if (hashed_password === undefined) return {success: false, status: 404}
+        let user_data = await this.user_model.getUserData(userName);
+        if (user_data === null) return {success: false, status: 500}
+        else if (user_data === undefined) return {success: false, status: 404}
 
-        if (bcrypt.compareSync(password, hashed_password)){
-            let token = jwt.sign({userName: userName}, config.privateKey, {expiresIn: config.expiration});
+        if (bcrypt.compareSync(password, user_data.password)){
+            user_data.userName = userName;
+            delete(user_data.password);
+            let token = jwt.sign(user_data, config.privateKey, {expiresIn: config.expiration});
             return {success: true, status: 200, token: token};
         }
     }
